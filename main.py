@@ -2,7 +2,7 @@ from tree_generator import GameTreeGenerator, GameState
 
 # šis ir kods testēšanai
 
-initial_state = GameState(100000, 0)
+initial_state = GameState(100000, 0, 0)
 tree = GameTreeGenerator.generate_tree(initial_state)
 
 def print_tree(node):

@@ -3,7 +3,7 @@ from collections import namedtuple
 
 from constants import ALLOWED_DIVISORS
 
-GameState = namedtuple("GameState", "number points")
+GameState = namedtuple("GameState", "number points bank")
 
 
 class StateNode:
@@ -26,7 +26,7 @@ class StateNode:
         return level
 
     def __str__(self):
-        return f'Level: {self.level}, Direct children: {len(self.children)}, State: [number: {self.game_state.number}, points: {self.game_state.points}]'
+        return f'Level: {self.level}, Direct children: {len(self.children)}, State: [number: {self.game_state.number}, points: {self.game_state.points}, bank: {self.game_state.bank}]'
 
     def add_child(self, child: "StateNode") -> None:
         child.parent = self
@@ -45,13 +45,13 @@ class GameTreeGenerator:
 
                 new_number = node.game_state.number // divisor
                 new_points = node.game_state.points
+                new_bank = node.game_state.bank
 
-                if new_number % 5 == 0 or new_number % 10 == 0 or new_number % 2 == 1:
-                    new_points += 1
-                else:
-                    new_points -= 1
+                new_points = new_points + 1 if new_number % 2 == 1 else new_points - 1
+                if new_number % 5 == 0 or new_number % 10 == 0:
+                    new_bank += 1
 
-                new_state = GameState(new_number, new_points)
+                new_state = GameState(new_number, new_points, new_bank)
                 new_node = GameTreeGenerator.generate_tree(new_state)
                 node.add_child(new_node)
 
