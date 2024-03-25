@@ -1,15 +1,10 @@
-from tree_generator import GameTreeGenerator, GameState
+import tkinter as tk
+from game_ui import GameUI
 
-# šis ir kods testēšanai
+def main():
+    root = tk.Tk()
+    app = GameUI(root)
+    root.mainloop()
 
-initial_state = GameState(100000, 0, 0)
-tree = GameTreeGenerator.generate_tree(initial_state)
-
-def print_tree(node):
-    print(node)
-    
-    if node.children:
-        for child in node.children:
-            print_tree(child)
-            
-print_tree(tree)
+if __name__ == "__main__":
+    main()
