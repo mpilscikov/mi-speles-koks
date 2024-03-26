@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from tree_generator import GameState
 from constants import ALLOWED_DIVISORS
 import random
@@ -52,7 +53,7 @@ class GameUI:
         for widget in self.master.winfo_children():
             widget.pack_forget()
 
-    def create_labels(self):  # Added create_labels method
+    def create_labels(self):
         self.number_label = tk.Label(self.master, text=f"Current Number: {self.game_state.number}")
         self.number_label.pack()
         self.points_label = tk.Label(self.master, text=f"Points: {self.game_state.points}")
@@ -64,16 +65,25 @@ class GameUI:
         if self.game_state.number % divisor == 0:
             new_number = self.game_state.number // divisor
             new_points, new_bank = calculate_points_and_bank(new_number, self.game_state.points,
-                                                                  self.game_state.bank)
+                                                             self.game_state.bank)
             self.game_state = GameState(new_number, new_points, new_bank)
             self.update_labels()
+
+            divisible = any(self.game_state.number % d == 0 for d in ALLOWED_DIVISORS)
+            if not divisible:
+                if self.game_state.points % 2 == 1:
+                    new_points = self.game_state.points - self.game_state.bank
+                else:
+                    new_points = self.game_state.points + self.game_state.bank
+
+                if new_points % 2 == 1:
+                    winner = "Player 1"
+                else:
+                    winner = "Player 2"
+
+                tk.messagebox.showinfo("Game Over", f"The winner is {winner}!")
 
     def update_labels(self):
         self.number_label.config(text=f"Current Number: {self.game_state.number}")
         self.points_label.config(text=f"Points: {self.game_state.points}")
         self.bank_label.config(text=f"Bank: {self.game_state.bank}")
-
-
-root = tk.Tk()
-app = GameUI(root)
-root.mainloop()
