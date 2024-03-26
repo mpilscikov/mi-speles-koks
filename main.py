@@ -1,6 +1,8 @@
 import tkinter as tk
 from game_ui import GameUI
 
+
+# UI testēšana
 def main():
     root = tk.Tk()
     app = GameUI(root)

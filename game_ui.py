@@ -3,11 +3,36 @@ from tree_generator import GameState
 from constants import ALLOWED_DIVISORS
 import random
 
+
+def calculate_points_and_bank(number, points, bank):
+    if number % 2 == 1:
+        points += 1
+    else:
+        points -= 1
+    if number % 5 == 0 or number % 10 == 0:
+        bank += 1
+    return points, bank
+
+
 class GameUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Game")
         self.game_state = None
+        self.algorithm = None
+        self.generate_selection_screen()
+
+    def generate_selection_screen(self):
+        tk.Label(self.master, text="Choose an algorithm: ").pack()
+        tk.Button(self.master, text="Minimax", command=self.set_minimax_algorithm).pack()
+        tk.Button(self.master, text="Alpha-Beta", command=self.set_alpha_beta_algorithm).pack()
+
+    def set_minimax_algorithm(self):
+        self.algorithm = "minimax"
+        self.generate_number_selection()
+
+    def set_alpha_beta_algorithm(self):
+        self.algorithm = "alpha_beta"
         self.generate_number_selection()
 
     def generate_number_selection(self):
@@ -18,16 +43,16 @@ class GameUI:
 
     def start_game(self, number):
         self.game_state = GameState(number, 0, 0)
-        self.clear_number_selection()
+        self.clear_selection_screen()
         self.create_labels()
         for divisor in ALLOWED_DIVISORS:
             tk.Button(self.master, text=f"Divide by {divisor}", command=lambda num=divisor: self.make_move(num)).pack()
 
-    def clear_number_selection(self):
+    def clear_selection_screen(self):
         for widget in self.master.winfo_children():
             widget.pack_forget()
 
-    def create_labels(self):
+    def create_labels(self):  # Added create_labels method
         self.number_label = tk.Label(self.master, text=f"Current Number: {self.game_state.number}")
         self.number_label.pack()
         self.points_label = tk.Label(self.master, text=f"Points: {self.game_state.points}")
@@ -38,20 +63,17 @@ class GameUI:
     def make_move(self, divisor):
         if self.game_state.number % divisor == 0:
             new_number = self.game_state.number // divisor
-            new_points, new_bank = self.calculate_points_and_bank(new_number, self.game_state.points, self.game_state.bank)
+            new_points, new_bank = calculate_points_and_bank(new_number, self.game_state.points,
+                                                                  self.game_state.bank)
             self.game_state = GameState(new_number, new_points, new_bank)
             self.update_labels()
-
-    def calculate_points_and_bank(self, number, points, bank):
-        if number % 2 == 1:
-            points += 1
-        else:
-            points -= 1
-        if number % 5 == 0 or number % 10 == 0:
-            bank += 1
-        return points, bank
 
     def update_labels(self):
         self.number_label.config(text=f"Current Number: {self.game_state.number}")
         self.points_label.config(text=f"Points: {self.game_state.points}")
         self.bank_label.config(text=f"Bank: {self.game_state.bank}")
+
+
+root = tk.Tk()
+app = GameUI(root)
+root.mainloop()
