@@ -36,6 +36,16 @@ class StateNode:
 class GameTreeGenerator:
 
     @staticmethod
+    def calculate_points_and_bank(number, points, bank):
+        if number % 2 == 1:
+            points += 1
+        else:
+            points -= 1
+        if number % 5 == 0 or number % 10 == 0:
+            bank += 1
+        return points, bank
+
+    @staticmethod
     def generate_tree(game_state: GameState) -> StateNode:
 
         node = StateNode(game_state)
@@ -44,12 +54,8 @@ class GameTreeGenerator:
             if node.game_state.number % divisor == 0:
 
                 new_number = node.game_state.number // divisor
-                new_points = node.game_state.points
-                new_bank = node.game_state.bank
-
-                new_points = new_points + 1 if new_number % 2 == 1 else new_points - 1
-                if new_number % 5 == 0 or new_number % 10 == 0:
-                    new_bank += 1
+                new_points, new_bank = GameTreeGenerator.calculate_points_and_bank(
+                    new_number, node.game_state.points, node.game_state.bank)
 
                 new_state = GameState(new_number, new_points, new_bank)
                 new_node = GameTreeGenerator.generate_tree(new_state)
