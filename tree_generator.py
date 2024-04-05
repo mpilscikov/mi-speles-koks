@@ -13,7 +13,6 @@ class StateNode:
 
         self.parent: StateNode | None = None
         self.children: List[StateNode] = []
-        self.heuristic_value: int = 0  # TODO: heuristic_value novērtējums
 
     @property
     def level(self) -> int:
