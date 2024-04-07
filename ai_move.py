@@ -2,7 +2,7 @@ from alpha_beta import AlphaBeta
 from tree_generator import GameState, GameTreeGenerator
 from constants import ALLOWED_DIVISORS
 
-def ai_move(game_state, algorithm):
+def ai_move(game_state, algorithm, player_first):
     if algorithm == "minimax":
         pass
     elif algorithm == "alpha_beta":
@@ -16,8 +16,8 @@ def ai_move(game_state, algorithm):
                                                                                    game_state.points,
                                                                                    game_state.bank)
                 new_state = GameState(new_number, new_points, new_bank)
-                value = AlphaBeta.alpha_beta(GameTreeGenerator.generate_tree(new_state), depth=3,
-                                             alpha=float("-inf"), beta=float("inf"), maximizing_player=False)
+                value = AlphaBeta.alpha_beta(GameTreeGenerator.generate_tree(new_state), depth=20,
+                                             alpha=float("-inf"), beta=float("inf"), maximizing_player=False, firstPlayer=player_first)
                 if value > best_value:
                     best_value = value
                     best_move = divisor
@@ -29,5 +29,5 @@ def ai_move(game_state, algorithm):
                                                                                game_state.bank)
             game_state = GameState(new_number, new_points, new_bank)
 
-            print(f"AI chose to divide by {best_move}, {new_number}")
+            # for debugging print(f"AI chose to divide by {best_move}, {new_number}")
             return game_state

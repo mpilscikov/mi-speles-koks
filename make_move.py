@@ -9,7 +9,7 @@ def make_move(game_state, divisor):
     new_points, new_bank = GameTreeGenerator.calculate_points_and_bank(new_number, game_state.points,
                                                                        game_state.bank)
     game_state = GameState(new_number, new_points, new_bank)
-    return check_valid_moves(game_state)
+    return game_state
 
 def check_valid_moves(game_state):
     no_valid_moves = True
