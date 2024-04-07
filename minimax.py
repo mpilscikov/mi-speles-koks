@@ -1,32 +1,43 @@
-import math
+from tree_generator import StateNode, GameState
 
+class Minimax:
+    @staticmethod
+    def minimax(node: StateNode, depth: int,  maximizing_player: bool, ai_player: int)-> int:
+        if depth == 0 or not node.children:
+            return Minimax.heuristic(node.game_state, ai_player)
 
-class AlgorithmMinimax:
-
-    def __init__(self, move=None, value=None):
-        self.move = move
-        self.value = value
-
-    def __str__(self):
-        return f" {self.move}: {self.value}"
-
-    def minimax(self,  node, is_max):
-
-        if not node.children:
-            return AlgorithmMinimax(None, node.heuristic_value)
-
-        if is_max:
-            value_max = -math.inf
-
+        if maximizing_player:
+            best_num = float("-inf")
             for child in node.children:
-                value = self.minimax(child, False).value
-                value_max = max(value_max,  value)
-            return AlgorithmMinimax("max", value_max)
-
+                value = Minimax.minimax(child, depth - 1, False, ai_player)
+                best_num = max(best_num, value)
+            return best_num
         else:
-            valMin = math.inf
-
+            best_num = float("inf")
             for child in node.children:
-                value = self.minimax(child, True).value
-                valMin = min(valMin, value)
-            return AlgorithmMinimax("min", valMin)
+                value = Minimax.minimax(child,  depth - 1, True, ai_player)
+                best_num = min(best_num, value)
+            return best_num 
+
+    @staticmethod
+    def heuristic(game_state:GameState, ai_player: int) -> int:
+        points = game_state.points
+        bank = game_state.bank
+
+        points += bank if points % 2 == 1 else -bank
+        bank += 1 if points % 10 in (0, 5) else 0
+        points -=  bank if points % 2 == 1 else -bank
+
+        if points % 2 == 1:
+            if ai_player == 1:
+                return 1
+            else:
+                return  -1
+        else:
+            if ai_player == 1:
+                return -1
+            else:
+                return 1 
+
+
+
