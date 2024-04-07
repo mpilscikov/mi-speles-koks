@@ -7,6 +7,7 @@ from ai_move import ai_move
 from make_move import make_move
 from make_move import check_valid_moves
 
+
 class GameUI:
     def __init__(self, master):
         self.master = master
@@ -70,6 +71,7 @@ class GameUI:
             self.player_move()
         else:
             self.ai_move()
+            self.update_labels()
 
     def clear_selection_screen(self):
         for widget in self.master.winfo_children():
@@ -115,7 +117,7 @@ class GameUI:
             self.update_labels()
 
     def ai_move(self):
-        self.game_state = ai_move(self.game_state, self.algorithm,self.player_first)
+        self.game_state = ai_move(self.game_state, self.algorithm, self.player_first)
         if self.game_state is not None:
             self.player_move()
 
