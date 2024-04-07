@@ -5,6 +5,7 @@ import random
 from constants import ALLOWED_DIVISORS
 from ai_move import ai_move
 from make_move import make_move
+from make_move import check_valid_moves
 
 class GameUI:
     def __init__(self, master):
@@ -61,7 +62,7 @@ class GameUI:
             button.pack(anchor="center", pady=5)
 
     def start_game(self, number):
-        self.game_state = GameState(number, 0, 0)
+        self.game_state = GameState(622, 0, 0)
         self.clear_selection_screen()
         self.create_labels()
 
@@ -108,15 +109,21 @@ class GameUI:
     def make_move(self, divisor):
         self.game_state = make_move(self.game_state, divisor)
         if self.game_state is not None:
-            self.update_labels()
+            self.player_move()
             self.ai_move()
+            self.update_labels()
+            check_valid_moves(self.game_state)
 
     def ai_move(self):
         self.game_state = ai_move(self.game_state, self.algorithm)
         if self.game_state is not None:
-            self.update_labels()
+            self.player_move()
 
     def update_labels(self):
         self.number_label.config(text=f"Current Number: {self.game_state.number}")
         self.points_label.config(text=f"Points: {self.game_state.points}")
         self.bank_label.config(text=f"Bank: {self.game_state.bank}")
+
+root = tk.Tk()
+app = GameUI(root)
+root.mainloop()
