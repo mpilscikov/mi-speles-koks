@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
+from alpha_beta import AlphaBeta
 from tree_generator import GameState, GameTreeGenerator
 from constants import ALLOWED_DIVISORS
+from determine_winner import determine_winner
 import random
 
 
@@ -34,8 +36,10 @@ class GameUI:
         selection_frame.pack(expand=True)
 
         tk.Label(selection_frame, text="Choose an algorithm:").pack()
-        tk.Button(selection_frame, text="Minimax", command=self.set_minimax_algorithm, width=15, height=2).pack()
-        tk.Button(selection_frame, text="Alpha-Beta", command=self.set_alpha_beta_algorithm, width=15, height=2).pack()
+        tk.Button(selection_frame, text="Minimax",
+                  command=self.set_minimax_algorithm, width=15, height=2).pack()
+        tk.Button(selection_frame, text="Alpha-Beta",
+                  command=self.set_alpha_beta_algorithm, width=15, height=2).pack()
 
     def set_minimax_algorithm(self):
         self.algorithm = "minimax"
@@ -69,7 +73,7 @@ class GameUI:
 
     def clear_selection_screen(self):
         for widget in self.master.winfo_children():
-            widget.pack_forget()
+            widget.destroy()
 
     def create_labels(self):
         labels_frame = tk.Frame(self.master)
@@ -77,9 +81,6 @@ class GameUI:
 
         self.number_label = tk.Label(labels_frame, text=f"Current Number: {self.game_state.number}")
         self.number_label.pack(anchor="center", pady=5)
-
-        self.player_label = tk.Label(labels_frame, text=f"Next Move: {self.player_first}")
-        self.player_label.pack(anchor="center", pady=5)
 
         self.points_label = tk.Label(labels_frame, text=f"Points: {self.game_state.points}")
         self.points_label.pack(anchor="center", pady=5)
@@ -89,10 +90,21 @@ class GameUI:
 
     def player_move(self):
         self.clear_move_buttons()
+        valid_moves_exist = False
         for divisor in ALLOWED_DIVISORS:
-            button = tk.Button(self.master, text=f"Divide by {divisor}",
-                               command=lambda num=divisor: self.make_move(num), width=15, height=2)
-            button.pack(anchor="center", pady=5)
+            if self.game_state.number % divisor == 0:
+                valid_moves_exist = True
+                button = tk.Button(self.master, text=f"Divide by {divisor}",
+                                   command=lambda num=divisor: self.make_move(num), width=15, height=2)
+                button.pack(anchor="center", pady=5)
+            else:
+                button = tk.Button(self.master, text=f"Can't divide by {divisor}",
+                                   command=lambda: None, width=15, height=2, state="disabled")
+                button.pack(anchor="center", pady=5)
+
+        if not valid_moves_exist:
+            winner = determine_winner(self.game_state)
+            tk.messagebox.showinfo("Game Over", f"The winner is {winner}!")
 
     def clear_move_buttons(self):
         for widget in self.master.winfo_children():
@@ -100,67 +112,56 @@ class GameUI:
                 widget.pack_forget()
 
     def make_move(self, divisor):
-        if self.game_state.number % divisor == 0:
-            new_number = self.game_state.number // divisor
-            new_points, new_bank = GameTreeGenerator.calculate_points_and_bank(new_number, self.game_state.points, self.game_state.bank)
-            self.game_state = GameState(new_number, new_points, new_bank)
-            self.update_labels()
-
-            divisible = any(self.game_state.number % d == 0 for d in ALLOWED_DIVISORS)
-            if not divisible:
-                winner = self.determine_winner()
-                tk.messagebox.showinfo("Game Over", f"The winner is {winner}!")
-            else:
-                if self.player_first == "Player":
-                    self.ai_move()
-                else:
-                    self.player_move()
-        else:
-            tk.messagebox.showerror("Invalid Move", "Please choose a valid divisor.")
-
-    def ai_move(self):
-        if self.algorithm == "minimax":
-            divisor = self.minimax()
-        elif self.algorithm == "alpha_beta":
-            divisor = self.alpha_beta()
-
-        print("AI chose divisor:", divisor)
-
         new_number = self.game_state.number // divisor
         new_points, new_bank = GameTreeGenerator.calculate_points_and_bank(new_number, self.game_state.points,
                                                                            self.game_state.bank)
         self.game_state = GameState(new_number, new_points, new_bank)
         self.update_labels()
 
-        divisible = any(self.game_state.number % d == 0 for d in ALLOWED_DIVISORS)
-        if not divisible:
-            winner = self.determine_winner()
+        no_valid_moves = True
+        for divisor in ALLOWED_DIVISORS:
+            if self.game_state.number % divisor == 0:
+                no_valid_moves = False
+                break
+
+        if no_valid_moves:
+            winner = determine_winner(self.game_state)
             tk.messagebox.showinfo("Game Over", f"The winner is {winner}!")
         else:
-            if self.player_first == "Player":
+            self.ai_move()
+
+    def ai_move(self):
+        if self.algorithm == "minimax":
+            pass
+        elif self.algorithm == "alpha_beta":
+            best_value = float("-inf")
+            best_move = None
+
+            for divisor in ALLOWED_DIVISORS:
+                if self.game_state.number % divisor == 0:
+                    new_number = self.game_state.number // divisor
+                    new_points, new_bank = GameTreeGenerator.calculate_points_and_bank(new_number,
+                                                                                       self.game_state.points,
+                                                                                       self.game_state.bank)
+                    new_state = GameState(new_number, new_points, new_bank)
+                    value = AlphaBeta.alpha_beta(GameTreeGenerator.generate_tree(new_state), depth=3,
+                                                 alpha=float("-inf"), beta=float("inf"), maximizing_player=False)
+                    if value > best_value:
+                        best_value = value
+                        best_move = divisor
+
+            if best_move is not None:
+                new_number = self.game_state.number // best_move
+                new_points, new_bank = GameTreeGenerator.calculate_points_and_bank(new_number,
+                                                                                   self.game_state.points,
+                                                                                   self.game_state.bank)
+                self.game_state = GameState(new_number, new_points, new_bank)
+
+                print(f"AI chose to divide by {best_move}, {new_number}")
+                self.update_labels()
                 self.player_move()
-            else:
-                self.ai_move()
-
-    def minimax(self):
-        return random.choice(ALLOWED_DIVISORS)
-
-    def alpha_beta(self):
-        return random.choice(ALLOWED_DIVISORS)
 
     def update_labels(self):
         self.number_label.config(text=f"Current Number: {self.game_state.number}")
-        self.player_label.config(text=f"Next Move: {self.player_first}")
         self.points_label.config(text=f"Points: {self.game_state.points}")
         self.bank_label.config(text=f"Bank: {self.game_state.bank}")
-
-    def determine_winner(self):
-        if self.game_state.points % 2 == 0:
-            total_points = self.game_state.points + self.game_state.bank
-        else:
-            total_points = self.game_state.points - self.game_state.bank
-
-        if total_points % 2 == 0:
-            return "AI"
-        else:
-            return "Player"
