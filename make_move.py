@@ -4,6 +4,7 @@ from constants import ALLOWED_DIVISORS
 from tree_generator import GameTreeGenerator, GameState
 from tkinter import messagebox
 
+
 def make_move(game_state, divisor):
     new_number = game_state.number // divisor
     new_points, new_bank = GameTreeGenerator.calculate_points_and_bank(new_number, game_state.points,
