@@ -15,7 +15,7 @@ def ai_move(game_state, algorithm, player_first):
                                                                                game_state.points,
                                                                                game_state.bank)
                 new_state = GameState(new_number, new_points, new_bank)
-                value = Minimax.minimax(GameTreeGenerator.generate_tree(new_state), depth=20,
+                value = Minimax.minimax(GameTreeGenerator.generate_tree(new_state, ai_player=2, heuristic_value=0 ), depth=20,
                                         maximizing_player=False, ai_player=2 if player_first == "Player" else 1)
                 if value >best_value:
                     best_value = value
@@ -40,7 +40,7 @@ def ai_move(game_state, algorithm, player_first):
                                                                                    game_state.points,
                                                                                    game_state.bank)
                 new_state = GameState(new_number, new_points, new_bank)
-                value = AlphaBeta.alpha_beta(GameTreeGenerator.generate_tree(new_state), depth=20,
+                value = AlphaBeta.alpha_beta(GameTreeGenerator.generate_tree(new_state, ai_player=2, heuristic_value=0), depth=20,
                                              alpha=float("-inf"), beta=float("inf"), maximizing_player=False, firstPlayer=player_first)
                 if value > best_value:
                     best_value = value
@@ -53,5 +53,6 @@ def ai_move(game_state, algorithm, player_first):
                                                                                game_state.bank)
             game_state = GameState(new_number, new_points, new_bank)
 
-            # for debugging print(f"AI chose to divide by {best_move}, {new_number}")
+            # for debugging
+            print(f"AI chose to divide by {best_move}, {new_number}")
             return game_state

@@ -4,10 +4,12 @@ class AlphaBeta:
     @staticmethod
     def alpha_beta(node: StateNode, depth: int, alpha: int, beta: int, maximizing_player: bool,
                    firstPlayer: str) -> int:
-        # for debugging print(str(node))
+        # for debugging
+        print(str(node))
 
         if depth == 0 or len(node.children) == 0:
-            # for debugging print(AlphaBeta.heuristic(node.game_state, firstPlayer))
+            # for debugging
+            print(AlphaBeta.heuristic(node.game_state, firstPlayer))
             return AlphaBeta.heuristic(node.game_state, firstPlayer)
 
         if maximizing_player:
