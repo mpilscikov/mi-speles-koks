@@ -141,7 +141,8 @@ class GameUI:
             self.player_move()
 
     def show_authors(self):
-        authors = "Authors:\nAuthor1\nAuthor2"
+        authors = "Authors:\nArtjoms Tatagaškins\nMaksims Piļščikovs\nAgnese Rozenberga\nAnce Valnere\nMaigurs Skangalis"
+
         messagebox.showinfo("Authors", authors)
 
     def update_labels(self):
