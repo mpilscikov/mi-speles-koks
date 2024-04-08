@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from tree_generator import GameState
 from player_move import player_move_logic
 import random
@@ -6,7 +7,6 @@ from constants import ALLOWED_DIVISORS
 from ai_move import ai_move
 from make_move import make_move
 from make_move import check_valid_moves
-
 
 class GameUI:
     def __init__(self, master):
@@ -16,9 +16,20 @@ class GameUI:
         self.algorithm = None
         self.player_first = None
         self.master.geometry("400x600")
-        self.generate_selection_screen()
+        self.generate_start_screen()
+
+    def generate_start_screen(self):
+        start_frame = tk.Frame(self.master)
+        start_frame.pack(expand=True)
+
+        tk.Button(start_frame, text="Start Game",
+                   command=self.generate_selection_screen, width=15, height=2).pack(pady=10)
+        tk.Button(start_frame, text="Show Authors",
+                   command=self.show_authors, width=15, height=2).pack(pady=10)
 
     def generate_selection_screen(self):
+        self.clear_start_screen()
+
         selection_frame = tk.Frame(self.master)
         selection_frame.pack(expand=True)
 
@@ -33,6 +44,8 @@ class GameUI:
         self.generate_algorithm_selection()
 
     def generate_algorithm_selection(self):
+        self.clear_selection_screen()
+
         selection_frame = tk.Frame(self.master)
         selection_frame.pack(expand=True)
 
@@ -51,6 +64,8 @@ class GameUI:
         self.generate_number_selection()
 
     def generate_number_selection(self):
+        self.clear_selection_screen()
+
         number_frame = tk.Frame(self.master)
         number_frame.pack(expand=True)
 
@@ -72,6 +87,10 @@ class GameUI:
         else:
             self.ai_move()
             self.update_labels()
+
+    def clear_start_screen(self):
+        for widget in self.master.winfo_children():
+            widget.destroy()
 
     def clear_selection_screen(self):
         for widget in self.master.winfo_children():
@@ -120,6 +139,10 @@ class GameUI:
         self.game_state = ai_move(self.game_state, self.algorithm, self.player_first)
         if self.game_state is not None:
             self.player_move()
+
+    def show_authors(self):
+        authors = "Authors:\nAuthor1\nAuthor2"
+        messagebox.showinfo("Authors", authors)
 
     def update_labels(self):
         if self.game_state is None:
