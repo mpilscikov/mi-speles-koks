@@ -12,7 +12,7 @@ def make_move(game_state, divisor):
     game_state = GameState(new_number, new_points, new_bank)
     return game_state
 
-def check_valid_moves(game_state):
+def check_valid_moves(game_state, player_first):
     no_valid_moves = True
     for divisor in ALLOWED_DIVISORS:
         if game_state.number % divisor == 0:
@@ -20,7 +20,7 @@ def check_valid_moves(game_state):
             break
 
     if no_valid_moves:
-        winner = determine_winner(game_state)
+        winner = determine_winner(game_state, firstPlayer = player_first)
         tk.messagebox.showinfo("Game Over", f"The winner is {winner}!")
         return None
     else:

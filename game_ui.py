@@ -150,4 +150,4 @@ class GameUI:
         self.number_label.config(text=f"Current Number: {self.game_state.number}")
         self.points_label.config(text=f"Points: {self.game_state.points}")
         self.bank_label.config(text=f"Bank: {self.game_state.bank}")
-        check_valid_moves(self.game_state)
+        check_valid_moves(self.game_state, self.player_first)
