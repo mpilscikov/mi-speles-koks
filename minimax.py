@@ -4,9 +4,11 @@ from tree_generator import StateNode, GameState
 class Minimax:
     @staticmethod
     def minimax(node: StateNode, depth: int, maximizing_player: bool, firstPlayer: str) -> int:
+        # <------------- for debugging ------------->
         print(str(node))
 
         if depth == 0 or not node.children:
+            # <------------- for debugging ------------->
             print(Minimax.heuristic(node.game_state, firstPlayer))
             return Minimax.heuristic(node.game_state, firstPlayer)
 

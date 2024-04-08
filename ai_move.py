@@ -1,3 +1,4 @@
+import time
 from alpha_beta import AlphaBeta
 from tree_generator import GameState, GameTreeGenerator
 from constants import ALLOWED_DIVISORS
@@ -6,6 +7,8 @@ from minimax import Minimax
 
 def ai_move(game_state, algorithm, player_first):
     if algorithm == "minimax":
+        start_time = time.time()
+
         best_value = float("-inf")
         best_move = None
 
@@ -28,11 +31,16 @@ def ai_move(game_state, algorithm, player_first):
                                                                                game_state.points,
                                                                                game_state.bank)
             game_state = GameState(new_number, new_points, new_bank)
-            # for debugging
+            # <------------- for debugging ------------->
             print(f"AI chose to divide by {best_move}, {new_number}")
-            return game_state
+        # <------------- for debugging ------------->
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print("Time spent on minimax algorithm", elapsed_time, "s")
 
     elif algorithm == "alpha_beta":
+        start_time = time.time()
+
         best_value = float("-inf")
         best_move = None
 
@@ -57,6 +65,11 @@ def ai_move(game_state, algorithm, player_first):
                                                                                game_state.bank)
             game_state = GameState(new_number, new_points, new_bank)
 
-            # for debugging
+            # <------------- for debugging ------------->
             print(f"AI chose to divide by {best_move}, {new_number}")
-            return game_state
+        # <------------- for debugging ------------->
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print("Time spent on alpha-beta algorithm", elapsed_time, "s")
+
+    return game_state
