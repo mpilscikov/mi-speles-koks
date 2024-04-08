@@ -1,6 +1,5 @@
 from tree_generator import StateNode, GameState
 
-
 class AlphaBeta:
     @staticmethod
     def alpha_beta(node: StateNode, depth: int, alpha: int, beta: int, maximizing_player: bool,
