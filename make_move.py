@@ -20,8 +20,9 @@ def check_valid_moves(game_state, player_first):
             break
 
     if no_valid_moves:
-        winner = determine_winner(game_state, firstPlayer = player_first)
-        tk.messagebox.showinfo("Game Over", f"The winner is {winner}!")
+        winner = determine_winner(game_state, firstPlayer=player_first)
+        if winner is not None:  
+            tk.messagebox.showinfo("Game Over", f"The winner is {winner}!")
         return None
     else:
         return game_state
